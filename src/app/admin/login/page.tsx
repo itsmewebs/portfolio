@@ -6,8 +6,8 @@ import { Terminal, Lock, Mail, Loader2, AlertCircle, ShieldCheck } from "lucide-
 import Link from "next/link";
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState("admin@alinets.com");
-  const [password, setPassword] = useState("Admin123!@#");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
