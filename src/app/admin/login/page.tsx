@@ -87,7 +87,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-container/70 border border-outline/25 text-on-surface text-sm focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 font-mono text-xs"
-                  placeholder="admin@alinets.com"
+                  placeholder="Email"
                 />
               </div>
             </div>
@@ -105,7 +105,7 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-container/70 border border-outline/25 text-on-surface text-sm focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 text-xs font-mono"
-                  placeholder="••••••••"
+                  placeholder="Password"
                 />
               </div>
             </div>
