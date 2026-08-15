@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String   // Hashed with bcrypt
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Project {
+  id              String   @id @default(cuid())
+  title           String
+  slug            String   @unique
+  description     String
+  longDescription String?  @map("long_description")
+  imageUrl        String   @map("image_url")
+  galleryImages   String?  @map("gallery_images") // JSON array string e.g. ["/projects/img1.png", "/projects/img2.png"]
+  techStack       String   @map("tech_stack") // JSON array string e.g. ["Next.js", "Python", "PostgreSQL"]
+  features        String?  // JSON array of key highlight features
+  metrics         String?  // JSON array e.g. [{"label": "Processing", "value": "10x Faster"}]
+  architecture    String?  // Technical architectural summary
+  liveLink        String?  @map("live_link")
+  githubLink      String?  @map("github_link")
+  demoVideoUrl    String?  @map("demo_video_url")
+  isFeatured      Boolean  @default(false) @map("is_featured")
+  category        String   @default("WEB_DEV") // WEB_DEV, NETWORKING, CLOUD_DEVOPS, CYBER_SEC, DATA_SCIENCE
+  status          String   @default("PUBLISHED") // PUBLISHED, DRAFT, ARCHIVED
+  role            String?  @default("Lead Architect & Full-Stack Developer")
+  teamSize        String?  @default("Solo Project") @map("team_size")
+  completionDate  String?  @default("2024") @map("completion_date")
+  order           Int      @default(0)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([status])
+  @@index([isFeatured])
+  @@map("projects")
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  name        String
+  category    String   @default("FRONTEND") // FRONTEND, BACKEND, NETWORKING, TOOLS_DEVOPS, DATA_AI
+  proficiency Int      @default(85) // 1-100 percentage
+  icon        String?  // Lucide icon identifier
+  yearsOfExp  String?  @map("years_of_exp") // e.g. "3+ yrs"
+  isTopSkill  Boolean  @default(false) @map("is_top_skill")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([isTopSkill])
+  @@map("skills")
+}
+
+model Experience {
+  id           String   @id @default(cuid())
+  title        String
+  organization String
+  location     String?
+  period       String   // e.g. "2023 - Present"
+  description  String
+  type         String   @default("CAREER") // CAREER, ACADEMIC, CERTIFICATION
+  skills       String?  // JSON array string of skills applied
+  order        Int      @default(0)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@map("experiences")
+}
+
+model Certificate {
+  id            String    @id @default(cuid())
+  title         String
+  issuer        String
+  issueDate     String    @map("issue_date") // e.g. "Nov 2024"
+  expiryDate    String?   @map("expiry_date") // e.g. "Never" or "Nov 2027"
+  credentialUrl String?   @map("credential_url")
+  credentialId  String?   @map("credential_id")
+  imageUrl      String?   @map("image_url")
+  category      String    @default("TECH") // TECH, NETWORKING, CLOUD, DATA_AI
+  isFeatured    Boolean   @default(true) @map("is_featured")
+  order         Int       @default(0)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([isFeatured])
+  @@map("certificates")
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  content     String   // Full Markdown body
+  coverImage  String?  @map("cover_image")
+  category    String   @default("ENGINEERING") // ENGINEERING, NETWORKING, CLOUD_DEVOPS, WEB_DEV, THOUGHTS
+  tags        String   @default("[]") // JSON array string e.g. ["Next.js", "Networking", "PostgreSQL"]
+  readingTime String   @default("5 min read") @map("reading_time")
+  views       Int      @default(0)
+  likes       Int      @default(0)
+  isPublished Boolean  @default(true) @map("is_published")
+  isFeatured  Boolean  @default(false) @map("is_featured")
+  publishedAt DateTime @default(now()) @map("published_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([isPublished])
+  @@index([isFeatured])
+  @@map("blog_posts")
+}
+
+model Testimonial {
+  id            String   @id @default(cuid())
+  authorName    String   @map("author_name")
+  authorTitle   String   @map("author_title")
+  authorCompany String   @map("author_company")
+  authorAvatar  String?  @map("author_avatar")
+  quote         String
+  rating        Int      @default(5)
+  isApproved    Boolean  @default(true) @map("is_approved")
+  isFeatured    Boolean  @default(false) @map("is_featured")
+  order         Int      @default(0)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([isApproved])
+  @@index([isFeatured])
+  @@map("testimonials")
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  senderName  String   @map("sender_name")
+  senderEmail String   @map("sender_email")
+  subject     String?
+  message     String
+  isRead      Boolean  @default(false) @map("is_read")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([isRead])
+  @@map("messages")
+}
+
+model Subscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String?
+  isActive       Boolean   @default(true) @map("is_active")
+  subscribedAt   DateTime  @default(now()) @map("subscribed_at")
+  unsubscribedAt DateTime? @map("unsubscribed_at")
+
+  @@index([email])
+  @@index([isActive])
+  @@map("subscribers")
+}
+
+model SiteSettings {
+  id                    String   @id @default("default")
+  siteTitle             String   @default("Ali - ICT Specialist | Web Developer & Network Infrastructure Architect") @map("site_title")
+  heroGreeting          String   @default("Hi, I'm Ali,") @map("hero_greeting")
+  heroTagline           String   @default("ICT Specialist specializing in Full-Stack Web Development, Network Architecture & Cloud Systems.") @map("hero_tagline")
+  heroDescription       String   @default("With an academic degree in Information and Communications Technology (ICT), I engineer responsive full-stack web applications, scalable cloud infrastructure, and robust enterprise network topologies.") @map("hero_description")
+  aboutText             String   @default("Holding a specialized degree in Information and Communications Technology (ICT), I focus on the intersection of modern Full-Stack Web Engineering, Computer Networks, and Infrastructure Systems. From architecting high-performance Next.js web applications to configuring enterprise routing protocols, firewalls, and cloud telemetry, I build secure, scalable digital ecosystems.") @map("about_text")
+  statusBadgeText       String   @default("ICT Specialist × Web Developer × Network Infrastructure Architect") @map("status_badge_text")
+  availableForWork      Boolean  @default(true) @map("available_for_work")
+  resumeLink            String?  @map("resume_link")
+  githubUrl             String?  @default("https://github.com/alinets") @map("github_url")
+  linkedinUrl           String?  @default("https://linkedin.com/in/alinets") @map("linkedin_url")
+  twitterUrl            String?  @default("https://twitter.com/alinets") @map("twitter_url")
+  contactEmail          String?  @default("contact@alinets.com") @map("contact_email")
+  dynamicBrandingTags   String   @default("[\"ICT Specialist\", \"Full-Stack Web Developer\", \"Network Systems Engineer\", \"Next.js 15 & React 19\", \"TypeScript & Node.js\", \"Cisco Routing & Switching\", \"TCP/IP & Network Protocols\", \"Cloud Infrastructure & DevOps\", \"PostgreSQL & Prisma\"]") @map("dynamic_branding_tags")
+  footerText            String?  @default("Engineered by Ali with Next.js 15, Neon PostgreSQL, Prisma ORM & Zenith Design v7.0.") @map("footer_text")
+  metaImage             String?  @default("/og-image.jpg") @map("meta_image")
+  particlesEnabled      Boolean  @default(true) @map("particles_enabled")
+  blogEnabled           Boolean  @default(true) @map("blog_enabled")
+  commandPaletteEnabled Boolean  @default(true) @map("command_palette_enabled")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("activity_logs")
+}
